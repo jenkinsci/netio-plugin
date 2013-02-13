@@ -12,7 +12,7 @@
       <f:textbox default="${descriptor.getDefaultAdminAccount()}" />
     </f:entry>
     <f:entry title="${%text.admin.password}" field="adminPassword">
-      <f:textbox default="${descriptor.getDefaultAdminPassword()}" />
+      <f:password default="${descriptor.getDefaultAdminPassword()}" />
     </f:entry>
   </f:section>
 

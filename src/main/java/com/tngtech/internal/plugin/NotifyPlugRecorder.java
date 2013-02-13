@@ -1,5 +1,6 @@
 package com.tngtech.internal.plugin;
 
+import com.tngtech.internal.plug.Plug;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -11,18 +12,29 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
+import java.util.Properties;
 
 @SuppressWarnings("UnusedDeclaration")
 public class NotifyPlugRecorder extends Recorder {
 
+    private String plugNumber;
+
     @DataBoundConstructor
-    public NotifyPlugRecorder() {
+    public NotifyPlugRecorder(String plugNumber) {
+        this.plugNumber = plugNumber;
+    }
+
+
+
+    public String getPlugNumber() {
+        return plugNumber;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -38,8 +50,9 @@ public class NotifyPlugRecorder extends Recorder {
             return true;
         }
 
-        String output = String.format("Using connection to %s:%s@%s:%d", getDescriptor().getAdminAccount(),
-                getDescriptor().getAdminPassword(), getDescriptor().getHostName(), getDescriptor().getHostPort());
+        String output = String.format("Using connection to %s:%s@%s:%d for currentPlug number %s",
+                getDescriptor().getAdminAccount(), getDescriptor().getAdminPassword(), getDescriptor().getHostName(),
+                getDescriptor().getHostPort(), getPlugNumber());
         listener.getLogger().println(output);
 
         return true;
@@ -51,11 +64,13 @@ public class NotifyPlugRecorder extends Recorder {
 
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+        private Properties properties;
+
         private String hostName = getDefaultHostName();
         private int hostPort = Integer.parseInt(getDefaultHostPort());
 
         private String adminAccount = getDefaultAdminAccount();
-        private String adminPassword = getDefaultAdminPassword();
+        private String adminPassword = getAdminPassword();
 
         public DescriptorImpl() {
             super(NotifyPlugRecorder.class);
@@ -71,29 +86,28 @@ public class NotifyPlugRecorder extends Recorder {
             return Messages.text_description();
         }
 
-        // TODO load properties file
         public String getDefaultHostName() {
-            return "netio.io";
+            return Messages.defaults_host_name();
         }
 
         public String getDefaultHostPort() {
-            return Integer.toString(80);
+            return Messages.defaults_host_port();
         }
 
         public String getDefaultAdminAccount() {
-            return "admin";
+            return Messages.defaults_admin_account();
         }
 
         public String getDefaultAdminPassword() {
-            return "admin";
+            return Messages.defaults_admin_password();
         }
 
         public FormValidation doCheckHostName(@QueryParameter String hostName) {
             return checkForExistence(hostName);
         }
 
-        public FormValidation doCheckHostPort(@QueryParameter String hostPortText) {
-            return checkForNumber(hostPortText);
+        public FormValidation doCheckHostPort(@QueryParameter String hostPort) {
+            return checkForNumber(hostPort);
         }
 
         public FormValidation doCheckAdminAccount(@QueryParameter String adminAccount) {
@@ -104,6 +118,16 @@ public class NotifyPlugRecorder extends Recorder {
             return checkForExistence(adminPassword);
         }
 
+        public ListBoxModel doFillPlugNumberItems() {
+            ListBoxModel items = new ListBoxModel();
+            for (Plug plug : Plug.values()) {
+                String plugName = plug.name();
+                String plugText = plug.getPlugNumber().toString();
+                items.add(new ListBoxModel.Option(plugText, plugName));
+            }
+            return items;
+        }
+
         private FormValidation checkForExistence(String value) {
             if (value.length() == 0)
                 return FormValidation.error(Messages.error_notEntered());
@@ -112,7 +136,6 @@ public class NotifyPlugRecorder extends Recorder {
             return FormValidation.ok();
         }
 
-        //TODO does not work
         private FormValidation checkForNumber(String numberText) {
             try {
                 Integer.parseInt(numberText);
