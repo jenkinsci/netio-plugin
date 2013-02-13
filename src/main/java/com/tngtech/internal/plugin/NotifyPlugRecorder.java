@@ -1,6 +1,8 @@
 package com.tngtech.internal.plugin;
 
 import com.tngtech.internal.plug.Plug;
+import com.tngtech.internal.plug.PlugConfig;
+import com.tngtech.internal.plug.PlugSender;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -23,15 +25,12 @@ import java.util.Properties;
 
 @SuppressWarnings("UnusedDeclaration")
 public class NotifyPlugRecorder extends Recorder {
-
-    private String plugNumber;
+    private final String plugNumber;
 
     @DataBoundConstructor
     public NotifyPlugRecorder(String plugNumber) {
         this.plugNumber = plugNumber;
     }
-
-
 
     public String getPlugNumber() {
         return plugNumber;
@@ -50,11 +49,9 @@ public class NotifyPlugRecorder extends Recorder {
             return true;
         }
 
-        String output = String.format("Using connection to %s:%s@%s:%d for currentPlug number %s",
-                getDescriptor().getAdminAccount(), getDescriptor().getAdminPassword(), getDescriptor().getHostName(),
-                getDescriptor().getHostPort(), getPlugNumber());
-        listener.getLogger().println(output);
-
+        PlugConfig plugConfig = new PlugConfig(getDescriptor().getHostName(), getDescriptor().getHostPort(),
+                getDescriptor().getAdminAccount(), getDescriptor().getAdminPassword(), getPlugNumber());
+        new PlugSender().send(listener, plugConfig);
         return true;
     }
 
