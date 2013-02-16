@@ -3,6 +3,7 @@ package com.tngtech.internal.plugclient;
 import com.tngtech.internal.helpers.IntegrationTest;
 import com.tngtech.internal.plug.Plug;
 import com.tngtech.internal.plug.PlugConfig;
+import com.tngtech.internal.telnet.TelnetCreator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -14,7 +15,7 @@ public class NetioPlugClientIntegrationTest {
     @Before
     public void setUp() {
         PlugConfig plugConfig = new PlugConfig("192.168.0.120", 1234, "admin", "admin", Plug.PLUG1.toString());
-        client = new NetioPlugClient(plugConfig);
+        client = new TelnetCreator().getNetIoPlugClient(plugConfig);
     }
 
     @Test

@@ -23,7 +23,7 @@ public class AsynchronousTelnetClientIntegrationTest {
     @Before
     public void setUp() {
         PlugConfig plugConfig = new PlugConfig("192.168.0.120", 1234, "admin", "admin", Plug.PLUG1.toString());
-        telnetClient = new AsynchronousTelnetClient(plugConfig);
+        telnetClient = new TelnetCreator().getAsynchronousTelnetClient(plugConfig);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class AsynchronousTelnetClientIntegrationTest {
             }
         });
         telnetClient.connect();
-        Thread.sleep(400);
+        Thread.sleep(500);
 
         telnetClient.disconnect();
 

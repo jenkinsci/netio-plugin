@@ -2,7 +2,6 @@ package com.tngtech.internal.telnet;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Queues;
-import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.notifications.NotificationHandler;
 
 import java.util.Queue;
@@ -14,10 +13,10 @@ public class SynchronousTelnetClient implements TelnetClient {
 
     private Queue<String> messageQueue;
 
-    public SynchronousTelnetClient(PlugConfig config) {
-        messageQueue = Queues.newLinkedBlockingQueue();
+    public SynchronousTelnetClient(AsynchronousTelnetClient telnetClient) {
+        this.telnetClient = telnetClient;
+        this.messageQueue = Queues.newLinkedBlockingQueue();
 
-        telnetClient = new AsynchronousTelnetClient(config);
         initNotificationHandler();
     }
 

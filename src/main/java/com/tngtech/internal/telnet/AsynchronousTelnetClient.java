@@ -12,6 +12,8 @@ import java.util.Set;
 
 public class AsynchronousTelnetClient implements Runnable, TelnetClient {
 
+    private final TelnetCreator telnetCreator;
+
     private final PlugConfig config;
 
     private Socket socket;
@@ -22,22 +24,19 @@ public class AsynchronousTelnetClient implements Runnable, TelnetClient {
 
     private final Set<NotificationHandler> notificationHandlers;
 
-    public AsynchronousTelnetClient(PlugConfig config) {
+    public AsynchronousTelnetClient(TelnetCreator telnetCreator, PlugConfig config) {
+        this.telnetCreator = telnetCreator;
         this.config = config;
         notificationHandlers = Sets.newHashSet();
     }
 
     public void connect() {
-        try {
-            socket = new Socket(config.getHostName(), config.getHostPort());
-            scanner = new Scanner(socket.getInputStream());
-            writer = new PrintWriter(socket.getOutputStream(), true);
+        socket = telnetCreator.getSocket(config.getHostName(), config.getHostPort());
+        scanner = telnetCreator.getSocketScanner(socket);
+        writer = telnetCreator.getSocketWriter(socket);
 
-            readerThread = new Thread(this);
-            readerThread.start();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        readerThread = telnetCreator.getThread(this);
+        readerThread.start();
     }
 
     public void disconnect() {

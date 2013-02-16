@@ -22,9 +22,9 @@ public class NetioPlugClient {
 
     private SynchronousTelnetClient telnetClient;
 
-    public NetioPlugClient(PlugConfig config) {
+    public NetioPlugClient(SynchronousTelnetClient telnetClient, PlugConfig config) {
         this.config = config;
-        telnetClient = new SynchronousTelnetClient(config);
+        this.telnetClient = telnetClient;
     }
 
     public void login() {

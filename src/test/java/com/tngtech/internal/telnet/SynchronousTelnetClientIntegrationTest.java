@@ -17,7 +17,7 @@ public class SynchronousTelnetClientIntegrationTest {
     @Before
     public void setUp() {
         PlugConfig plugConfig = new PlugConfig("192.168.0.120", 1234, "admin", "admin", Plug.PLUG1.toString());
-        telnetClient = new SynchronousTelnetClient(plugConfig);
+        telnetClient = new TelnetCreator().getSynchronousTelnetClient(plugConfig);
     }
 
     @Test
