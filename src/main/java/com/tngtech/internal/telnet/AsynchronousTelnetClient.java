@@ -2,6 +2,7 @@ package com.tngtech.internal.telnet;
 
 import com.google.common.collect.Sets;
 import com.tngtech.internal.plug.PlugConfig;
+import com.tngtech.internal.telnet.notifications.NotificationHandler;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,7 +10,7 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.Set;
 
-public class AsynchronousTelnetClient implements Runnable {
+public class AsynchronousTelnetClient implements Runnable, TelnetClient {
 
     private final PlugConfig config;
 

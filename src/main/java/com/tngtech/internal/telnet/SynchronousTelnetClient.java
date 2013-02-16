@@ -3,10 +3,11 @@ package com.tngtech.internal.telnet;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Queues;
 import com.tngtech.internal.plug.PlugConfig;
+import com.tngtech.internal.telnet.notifications.NotificationHandler;
 
 import java.util.Queue;
 
-public class SynchronousTelnetClient {
+public class SynchronousTelnetClient implements TelnetClient {
     public static final int TIME_TO_SLEEP = 200;
 
     private AsynchronousTelnetClient telnetClient;
