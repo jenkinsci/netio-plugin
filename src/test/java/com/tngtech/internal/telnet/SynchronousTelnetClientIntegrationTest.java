@@ -1,14 +1,17 @@
 package com.tngtech.internal.telnet;
 
 import com.google.common.base.Predicate;
+import com.tngtech.internal.helpers.IntegrationTest;
 import com.tngtech.internal.plug.Plug;
 import com.tngtech.internal.plug.PlugConfig;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertTrue;
 
-public class SynchronousTelnetClientTest {
+@Category(IntegrationTest.class)
+public class SynchronousTelnetClientIntegrationTest {
     private SynchronousTelnetClient telnetClient;
 
     @Before
@@ -22,7 +25,7 @@ public class SynchronousTelnetClientTest {
         telnetClient.connect();
         String foundMessage = telnetClient.waitForMessage(new Predicate<String>() {
             public boolean apply(String message) {
-               return message.startsWith("100");
+                return message.startsWith("100");
             }
         }, 1000);
         telnetClient.disconnect();

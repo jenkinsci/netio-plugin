@@ -1,10 +1,13 @@
 package com.tngtech.internal.telnet;
 
 import com.google.common.collect.Lists;
+import com.tngtech.internal.helpers.IntegrationTest;
 import com.tngtech.internal.plug.Plug;
 import com.tngtech.internal.plug.PlugConfig;
+import com.tngtech.internal.telnet.notifications.NotificationHandler;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.Collection;
 
@@ -12,7 +15,8 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AsynchronousTelnetClientTest {
+@Category(IntegrationTest.class)
+public class AsynchronousTelnetClientIntegrationTest {
 
     private AsynchronousTelnetClient telnetClient;
 
@@ -33,7 +37,7 @@ public class AsynchronousTelnetClientTest {
             }
         });
         telnetClient.connect();
-        Thread.sleep(100);
+        Thread.sleep(400);
 
         telnetClient.disconnect();
 
