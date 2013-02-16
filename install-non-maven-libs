@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mvn install:install-file  -Dfile=non-maven-libs/cpsuite-1.2.6.jar \
+                          -DgroupId=net.johanneslink \
+                          -DartifactId=cpsuite \
+                          -Dversion=1.2.6 \
+                          -Dpackaging=jar

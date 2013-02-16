@@ -2,7 +2,7 @@ package com.tngtech.internal.telnet;
 
 import com.google.common.collect.Lists;
 import com.tngtech.internal.helpers.IntegrationTest;
-import com.tngtech.internal.plug.Plug;
+import com.tngtech.internal.helpers.TestPlugConfig;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.notifications.NotificationHandler;
 import org.junit.Before;
@@ -22,7 +22,7 @@ public class AsynchronousTelnetClientIntegrationTest {
 
     @Before
     public void setUp() {
-        PlugConfig plugConfig = new PlugConfig("192.168.0.120", 1234, "admin", "admin", Plug.PLUG1.toString());
+        PlugConfig plugConfig = TestPlugConfig.getIntegrationTestConfig();
         telnetClient = new TelnetCreator().getAsynchronousTelnetClient(plugConfig);
     }
 

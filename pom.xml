@@ -32,9 +32,26 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>net.johanneslink</groupId>
+            <artifactId>cpsuite</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>1.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -64,6 +81,9 @@
                             <includes>
                                 <include>com/tngtech/**/*.class</include>
                             </includes>
+                            <excludes>
+                                <exclude>com/tngtech/internal/suites/**/*</exclude>
+                            </excludes>
                             <excludedGroups>com.tngtech.internal.helpers.IntegrationTest</excludedGroups>
                         </configuration>
                     </plugin>

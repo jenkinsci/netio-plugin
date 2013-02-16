@@ -3,10 +3,7 @@ package com.tngtech.internal.telnet;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.plugclient.NetioPlugClient;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
