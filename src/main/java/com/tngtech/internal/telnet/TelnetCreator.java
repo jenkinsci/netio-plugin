@@ -48,7 +48,7 @@ public class TelnetCreator {
     }
 
     public PrintWriter getSocketWriter(Socket socket) {
-        return new PrintWriter(getSocketOutputStream(socket));
+        return new PrintWriter(getSocketOutputStream(socket), true);
     }
 
     public OutputStream getSocketOutputStream(Socket socket) {

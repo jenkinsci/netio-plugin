@@ -32,7 +32,6 @@ public class AsynchronousTelnetClientIntegrationTest {
 
         telnetClient.addNotificationHandler(new NotificationHandler() {
             public void getNotification(String message) {
-                System.out.println(message);
                 textLines.add(message);
             }
         });
