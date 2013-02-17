@@ -2,10 +2,13 @@ package com.tngtech.internal.telnet;
 
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.plugclient.NetioPlugClient;
+import com.tngtech.internal.wrappers.Scanner;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class TelnetCreator {
     public AsynchronousTelnetClient getAsynchronousTelnetClient(PlugConfig config) {
@@ -32,7 +35,7 @@ public class TelnetCreator {
         }
     }
 
-    public Scanner getSocketScanner(Socket socket) {
+    public Scanner getSocketReader(Socket socket) {
         return new Scanner(getSocketInputStream(socket));
     }
 
