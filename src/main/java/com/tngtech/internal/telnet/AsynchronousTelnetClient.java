@@ -91,7 +91,8 @@ public class AsynchronousTelnetClient implements Runnable, TelnetClient {
         }
     }
 
-    private void sendNotification(String message) {
+    @VisibleForTesting
+    protected void sendNotification(String message) {
         for (NotificationHandler notificationHandler : notificationHandlers) {
             notificationHandler.getNotification(message);
         }
