@@ -1,7 +1,6 @@
 package com.tngtech.internal.telnet;
 
-import com.tngtech.internal.plug.PlugConfig;
-import com.tngtech.internal.plugclient.NetioPlugClient;
+import com.google.common.annotations.VisibleForTesting;
 import com.tngtech.internal.wrappers.Scanner;
 
 import java.io.IOException;
@@ -11,17 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class TelnetCreator {
-    public AsynchronousTelnetClient getAsynchronousTelnetClient(PlugConfig config) {
-        return new AsynchronousTelnetClient(this, config);
-    }
 
-    public SynchronousTelnetClient getSynchronousTelnetClient(PlugConfig config) {
-        return new SynchronousTelnetClient(getAsynchronousTelnetClient(config));
-    }
-
-    public NetioPlugClient getNetIoPlugClient(PlugConfig config) {
-        return new NetioPlugClient(getSynchronousTelnetClient(config), config);
-    }
 
     public Thread getThread(Runnable runnable) {
         return new Thread(runnable);
@@ -29,10 +18,15 @@ public class TelnetCreator {
 
     public Socket getSocket(String hostName, int port) {
         try {
-            return new Socket(hostName, port);
+            return doGetSocket(hostName, port);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @VisibleForTesting
+    protected Socket doGetSocket(String hostName, int port) throws IOException {
+        return new Socket(hostName, port);
     }
 
     public Scanner getSocketReader(Socket socket) {

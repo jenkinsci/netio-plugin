@@ -48,8 +48,8 @@ public class ScannerTest {
     @Test
     public void testClose() {
         doThrow(new IllegalStateException()).when(internalScanner).close();
-
         expectedException.expect(IllegalStateException.class);
+
         scanner.close();
     }
 }

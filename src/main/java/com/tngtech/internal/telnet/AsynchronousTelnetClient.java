@@ -47,7 +47,6 @@ public class AsynchronousTelnetClient implements Runnable, TelnetClient {
         doConnect();
     }
 
-
     private void doConnect() {
         socket = telnetCreator.getSocket(config.getHostName(), config.getHostPort());
         scanner = telnetCreator.getSocketReader(socket);

@@ -17,7 +17,7 @@ public class SynchronousTelnetClientIntegrationTest {
     @Before
     public void setUp() {
         PlugConfig plugConfig = TestPlugConfig.getIntegrationTestConfig();
-        telnetClient = new TelnetCreator().getSynchronousTelnetClient(plugConfig);
+        telnetClient = new TelnetClientCreator().getSynchronousTelnetClient(plugConfig);
     }
 
     @Test
