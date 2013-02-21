@@ -60,14 +60,14 @@ public class NotifyPlugRecorder extends Recorder {
     }
 
     @Extension
-    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         private Properties properties;
 
         private String hostName = getDefaultHostName();
         private int hostPort = Integer.parseInt(getDefaultHostPort());
 
         private String adminAccount = getDefaultAdminAccount();
-        private String adminPassword = getAdminPassword();
+        private String adminPassword = getDefaultAdminPassword();
 
         public DescriptorImpl() {
             super(NotifyPlugRecorder.class);
