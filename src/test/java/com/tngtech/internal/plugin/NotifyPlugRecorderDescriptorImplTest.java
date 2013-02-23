@@ -1,10 +1,15 @@
 package com.tngtech.internal.plugin;
 
+import com.tngtech.internal.plug.Plug;
+import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -12,15 +17,19 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Jenkins.class)
+@PrepareForTest({Jenkins.class, JSONObject.class})
 public class NotifyPlugRecorderDescriptorImplTest {
     @Mock
     private Jenkins jenkins;
@@ -35,6 +44,11 @@ public class NotifyPlugRecorderDescriptorImplTest {
 
         descriptor = spy(new NotifyPlugRecorder.DescriptorImpl());
         doNothing().when(descriptor).save();
+    }
+
+    @Test
+    public void testIsApplicable() {
+        assertThat(descriptor.isApplicable(null), is(true));
     }
 
     @Test
@@ -82,10 +96,46 @@ public class NotifyPlugRecorderDescriptorImplTest {
         assertValidationResult(descriptor.doCheckAdminPassword("password"), FormValidation.Kind.OK, null);
     }
 
+    @Test
+    public void testFillPlugNumberItems() {
+        ListBoxModel model = descriptor.doFillPlugNumberItems();
+
+        assertThat(model, is(not(nullValue())));
+        assertOption(model, 0, Plug.PLUG1.name(), Plug.PLUG1.getPlugNumber().toString());
+        assertOption(model, 1, Plug.PLUG2.name(), Plug.PLUG2.getPlugNumber().toString());
+        assertOption(model, 2, Plug.PLUG3.name(), Plug.PLUG3.getPlugNumber().toString());
+        assertOption(model, 3, Plug.PLUG4.name(), Plug.PLUG4.getPlugNumber().toString());
+    }
+
+    @Test
+    public void testConfigure() throws Descriptor.FormException {
+        StaplerRequest request = mock(StaplerRequest.class);
+        JSONObject formData = PowerMockito.mock(JSONObject.class);
+
+        when(formData.getString("hostName")).thenReturn("hostName");
+        when(formData.getInt("hostPort")).thenReturn(80);
+        when(formData.getString("adminAccount")).thenReturn("adminAccount");
+        when(formData.getString("adminPassword")).thenReturn("adminPassword");
+
+        boolean response = descriptor.configure(request, formData);
+
+        assertThat(descriptor.getHostName(), is("hostName"));
+        assertThat(descriptor.getHostPort(), is(80));
+        assertThat(descriptor.getAdminAccount(), is("adminAccount"));
+        assertThat(descriptor.getAdminPassword(), is("adminPassword"));
+
+        verify(descriptor).save();
+        assertThat(response, is(true));
+    }
 
     private void assertValidationResult(FormValidation result, FormValidation.Kind expectedResult, String expectedMessage) {
         assertThat(result.kind, is(expectedResult));
         assertThat(result.getMessage(), is(expectedMessage));
     }
 
+    private void assertOption(ListBoxModel model, int index, String value, String displayedText) {
+        ListBoxModel.Option option = model.get(index);
+        assertThat(option.name, is(displayedText));
+        assertThat(option.value, is(value));
+    }
 }

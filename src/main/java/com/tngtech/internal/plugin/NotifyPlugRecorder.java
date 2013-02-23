@@ -99,6 +99,22 @@ public class NotifyPlugRecorder extends Recorder {
             return Messages.defaults_admin_password();
         }
 
+        public String getHostName() {
+            return hostName;
+        }
+
+        public int getHostPort() {
+            return hostPort;
+        }
+
+        public String getAdminAccount() {
+            return adminAccount;
+        }
+
+        public String getAdminPassword() {
+            return adminPassword;
+        }
+
         public FormValidation doCheckHostName(@QueryParameter String hostName) {
             return checkForExistence(hostName);
         }
@@ -113,16 +129,6 @@ public class NotifyPlugRecorder extends Recorder {
 
         public FormValidation doCheckAdminPassword(@QueryParameter String adminPassword) {
             return checkForExistence(adminPassword);
-        }
-
-        public ListBoxModel doFillPlugNumberItems() {
-            ListBoxModel items = new ListBoxModel();
-            for (Plug plug : Plug.values()) {
-                String plugName = plug.name();
-                String plugText = plug.getPlugNumber().toString();
-                items.add(new ListBoxModel.Option(plugText, plugName));
-            }
-            return items;
         }
 
         private FormValidation checkForExistence(String value) {
@@ -142,6 +148,16 @@ public class NotifyPlugRecorder extends Recorder {
             }
         }
 
+        public ListBoxModel doFillPlugNumberItems() {
+            ListBoxModel items = new ListBoxModel();
+            for (Plug plug : Plug.values()) {
+                String plugName = plug.name();
+                String plugText = plug.getPlugNumber().toString();
+                items.add(new ListBoxModel.Option(plugText, plugName));
+            }
+            return items;
+        }
+
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             hostName = formData.getString("hostName");
@@ -151,22 +167,6 @@ public class NotifyPlugRecorder extends Recorder {
 
             save();
             return super.configure(req, formData);
-        }
-
-        public String getHostName() {
-            return hostName;
-        }
-
-        public int getHostPort() {
-            return hostPort;
-        }
-
-        public String getAdminAccount() {
-            return adminAccount;
-        }
-
-        public String getAdminPassword() {
-            return adminPassword;
         }
     }
 }
