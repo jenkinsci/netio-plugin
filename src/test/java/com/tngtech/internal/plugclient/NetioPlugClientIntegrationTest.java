@@ -28,4 +28,11 @@ public class NetioPlugClientIntegrationTest {
 
         client.disconnect();
     }
+
+    @Test
+    public void testGetSystemTime() {
+        client.login();
+        client.enablePlugTemporarily();
+        client.disconnect();
+    }
 }

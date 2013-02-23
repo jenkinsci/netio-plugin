@@ -14,6 +14,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
@@ -62,6 +64,22 @@ public class NetioPlugClientTest {
 
         InOrder inOrder = inOrder(telnetClient);
         inOrder.verify(telnetClient).send("port 2 1");
+    }
+
+    @Test
+    public void testEnablePlugTemporarily() {
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("250 2012/12/31,23:59:45");
+
+        client.enablePlugTemporarily();
+
+        ArgumentCaptor<Predicate> captorForSystemTimeMessagePredicate = ArgumentCaptor.forClass(Predicate.class);
+
+        InOrder inOrder = inOrder(telnetClient);
+        inOrder.verify(telnetClient).send("system time");
+        inOrder.verify(telnetClient).waitForMessage(captorForSystemTimeMessagePredicate.capture(), eq(1000));
+        inOrder.verify(telnetClient).send("port timer 2 dt once 2012/12/31,23:59:45 2013/01/01,00:00:15 1111111");
+
+        assertThatPredicateReturnsTrueForCode(captorForSystemTimeMessagePredicate.getValue(), 250);
     }
 
     @Test

@@ -5,9 +5,12 @@ import com.google.common.collect.Queues;
 import com.tngtech.internal.telnet.notifications.NotificationHandler;
 
 import java.util.Queue;
+import java.util.logging.Logger;
 
 public class SynchronousTelnetClient implements TelnetClient {
     public static final int TIME_TO_SLEEP = 200;
+
+    private final Logger logger = Logger.getLogger("TelnetClient");
 
     private AsynchronousTelnetClient telnetClient;
 
@@ -23,6 +26,7 @@ public class SynchronousTelnetClient implements TelnetClient {
     private void initNotificationHandler() {
         telnetClient.addNotificationHandler(new NotificationHandler() {
             public void getNotification(String message) {
+                logger.info(String.format("Incoming message: %s", message));
                 messageQueue.offer(message);
             }
         });
@@ -37,6 +41,7 @@ public class SynchronousTelnetClient implements TelnetClient {
     }
 
     public void send(String message) {
+        logger.info(String.format("Outgoing message: %s", message));
         telnetClient.send(message);
     }
 
