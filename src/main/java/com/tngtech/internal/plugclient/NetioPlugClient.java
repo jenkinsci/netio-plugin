@@ -4,7 +4,7 @@ import com.google.common.base.Predicate;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.SynchronousTelnetClient;
 
-public class NetioPlugClient {
+public class NetioPlugClient implements PlugClient {
 
     private static class WaitForStatusCodePredicate implements Predicate<String> {
         private final Integer statusCode;

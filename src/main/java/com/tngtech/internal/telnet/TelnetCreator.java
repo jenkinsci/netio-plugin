@@ -2,6 +2,7 @@ package com.tngtech.internal.telnet;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.tngtech.internal.wrappers.Scanner;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +10,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+@Component
 public class TelnetCreator {
-
 
     public Thread getThread(Runnable runnable) {
         return new Thread(runnable);
