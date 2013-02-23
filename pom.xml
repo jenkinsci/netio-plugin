@@ -13,7 +13,9 @@
     <packaging>hpi</packaging>
 
     <properties>
+        <org.springframework.version>3.2.1.RELEASE</org.springframework.version>
         <guava.version>14.0-rc3</guava.version>
+
         <junit.version>4.11</junit.version>
         <cpsuite.version>1.2.6</cpsuite.version>
         <mockito.version>1.9.5</mockito.version>
@@ -23,6 +25,27 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
