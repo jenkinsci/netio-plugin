@@ -1,6 +1,7 @@
 package com.tngtech.internal.plugclient;
 
 import com.google.common.base.Predicate;
+import com.tngtech.internal.plug.Plug;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.SynchronousTelnetClient;
 import org.junit.Before;
@@ -35,12 +36,7 @@ public class NetioPlugClientTest {
 
         when(plugConfig.getAdminAccount()).thenReturn("adminAccount");
         when(plugConfig.getAdminPassword()).thenReturn("adminPassword");
-    }
-
-    @Test
-    public void testDisconnect() {
-        client.disconnect();
-        verify(telnetClient).disconnect();
+        when(plugConfig.getPlug()).thenReturn(Plug.PLUG2);
     }
 
     @Test
@@ -58,6 +54,28 @@ public class NetioPlugClientTest {
 
         assertThatPredicateReturnsTrueForCode(captorForConnectMessagePredicate.getValue(), 100);
         assertThatPredicateReturnsTrueForCode(captorForLoginMessagePredicate.getValue(), 250);
+    }
+
+    @Test
+    public void testEnablePlugPort() {
+        client.enablePlugPort();
+
+        InOrder inOrder = inOrder(telnetClient);
+        inOrder.verify(telnetClient).send("port 2 1");
+    }
+
+    @Test
+    public void testDisablePlugPort() {
+        client.disablePlugPort();
+
+        InOrder inOrder = inOrder(telnetClient);
+        inOrder.verify(telnetClient).send("port 2 0");
+    }
+
+    @Test
+    public void testDisconnect() {
+        client.disconnect();
+        verify(telnetClient).disconnect();
     }
 
     private void assertThatPredicateReturnsTrueForCode(Predicate<String> predicate, int code) {

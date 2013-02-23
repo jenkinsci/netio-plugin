@@ -19,8 +19,13 @@ public class NetioPlugClientIntegrationTest {
     }
 
     @Test
-    public void testLogin() {
+    public void testLogin() throws InterruptedException {
         client.login();
+
+        client.enablePlugPort();
+        Thread.sleep(2000);
+        client.disablePlugPort();
+
         client.disconnect();
     }
 }

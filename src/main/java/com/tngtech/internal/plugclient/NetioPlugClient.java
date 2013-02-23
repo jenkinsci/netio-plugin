@@ -6,6 +6,9 @@ import com.tngtech.internal.telnet.SynchronousTelnetClient;
 
 public class NetioPlugClient implements PlugClient {
 
+    public static final int STATE_ON = 1;
+    public static final int STATE_OFF = 0;
+
     private static class WaitForStatusCodePredicate implements Predicate<String> {
         private final Integer statusCode;
 
@@ -29,9 +32,17 @@ public class NetioPlugClient implements PlugClient {
 
     public void login() {
         telnetClient.connect();
-        System.out.println(telnetClient.waitForMessage(new WaitForStatusCodePredicate(100), 1000));
+        telnetClient.waitForMessage(new WaitForStatusCodePredicate(100), 1000);
         telnetClient.send(getLoginMessage());
-        System.out.println(telnetClient.waitForMessage(new WaitForStatusCodePredicate(250), 1000));
+        telnetClient.waitForMessage(new WaitForStatusCodePredicate(250), 1000);
+    }
+
+    public void enablePlugPort() {
+        telnetClient.send(getPortMessage(STATE_ON));
+    }
+
+    public void disablePlugPort() {
+        telnetClient.send(getPortMessage(STATE_OFF));
     }
 
     public void disconnect() {
@@ -40,5 +51,9 @@ public class NetioPlugClient implements PlugClient {
 
     private String getLoginMessage() {
         return String.format("login %s %s", config.getAdminAccount(), config.getAdminPassword());
+    }
+
+    private String getPortMessage(int newState) {
+        return String.format("port %d %d", config.getPlug().getPlugNumber(), newState);
     }
 }
