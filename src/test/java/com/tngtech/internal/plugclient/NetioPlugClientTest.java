@@ -87,7 +87,7 @@ public class NetioPlugClientTest {
     public void testEnablePlugTemporarily() {
         when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("250 2012/12/31,23:58:44");
 
-        client.enablePlugTemporarily();
+        client.enablePlugPortTemporarily();
 
         ArgumentCaptor<Predicate> captorForSystemTimeMessagePredicate = ArgumentCaptor.forClass(Predicate.class);
         ArgumentCaptor<Predicate> captorForSetTimerMessagePredicate = ArgumentCaptor.forClass(Predicate.class);

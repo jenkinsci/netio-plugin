@@ -56,7 +56,7 @@ public class NetioPlugClient implements PlugClient {
         sendAndWaitForAcknowledge(getPortEnableDisableMessage(PLUG_OFF), STATUS_OK);
     }
 
-    public void enablePlugTemporarily() {
+    public void enablePlugPortTemporarily() {
         String response = sendAndWaitForAcknowledge(getSystemTimeMessage(), STATUS_OK);
 
         DateTime timeToStart = getTimeToStart(getSystemTime(response));

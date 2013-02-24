@@ -32,7 +32,7 @@ public class NetioPlugClientIntegrationTest {
     @Test
     public void testGetSystemTime() {
         client.login();
-        client.enablePlugTemporarily();
+        client.enablePlugPortTemporarily();
         client.disconnect();
     }
 }
