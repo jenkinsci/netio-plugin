@@ -1,8 +1,10 @@
 package com.tngtech.internal.plug;
 
 import com.tngtech.internal.context.Context;
+import com.tngtech.internal.plugclient.NetioPlugClient;
 import com.tngtech.internal.plugclient.PlugClient;
 import com.tngtech.internal.plugclient.PlugClientCreator;
+import com.tngtech.internal.telnet.TelnetClientCreator;
 import hudson.model.BuildListener;
 
 public class PlugSender {
@@ -27,7 +29,8 @@ public class PlugSender {
     }
 
     public PlugClient getPlugClient(PlugConfig config) {
-        PlugClientCreator plugClientCreator = Context.getBean(PlugClientCreator.class);
-        return plugClientCreator.withPlugConfig(config).createClient();
+        return new NetioPlugClient(new TelnetClientCreator().getSynchronousTelnetClient(config), config);
+        //PlugClientCreator plugClientCreator = Context.getBean(PlugClientCreator.class);
+        //return plugClientCreator.withPlugConfig(config).createClient();
     }
 }
