@@ -1,20 +1,18 @@
 package com.tngtech.internal.plugclient;
 
+import com.google.inject.Inject;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.TelnetClientCreator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkState;
 
-@Component
 public class PlugClientCreator {
 
     private PlugConfig plugConfig;
 
     private TelnetClientCreator telnetClientCreator;
 
-    @Autowired
+    @Inject
     public PlugClientCreator(TelnetClientCreator telnetClientCreator) {
         this.telnetClientCreator = telnetClientCreator;
     }

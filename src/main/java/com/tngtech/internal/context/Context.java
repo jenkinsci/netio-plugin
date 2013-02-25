@@ -1,15 +1,21 @@
 package com.tngtech.internal.context;
 
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
-@Configuration
-@ComponentScan("com.tngtech.internal")
-public class Context {
+public class Context extends AbstractModule {
+    private static Injector injector;
+
     public static <T> T getBean(Class<T> clazz) {
-        BeanFactory factory = new AnnotationConfigApplicationContext(Context.class);
-        return factory.getBean(clazz);
+        if (injector == null) {
+            injector = Guice.createInjector(new Context());
+        }
+        return injector.getInstance(clazz);
+    }
+
+    @Override
+    protected void configure() {
+        // Ambiguous definitions go here
     }
 }

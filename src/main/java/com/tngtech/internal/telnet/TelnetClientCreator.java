@@ -2,9 +2,7 @@ package com.tngtech.internal.telnet;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.tngtech.internal.plug.PlugConfig;
-import org.springframework.stereotype.Component;
 
-@Component
 public class TelnetClientCreator {
     public AsynchronousTelnetClient getAsynchronousTelnetClient(PlugConfig config) {
         return new AsynchronousTelnetClient(getTelnetCreator(), config);
