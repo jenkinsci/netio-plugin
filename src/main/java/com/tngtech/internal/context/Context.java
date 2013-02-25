@@ -14,6 +14,10 @@ public class Context extends AbstractModule {
         return injector.getInstance(clazz);
     }
 
+    protected Injector getInjector() {
+        return injector;
+    }
+
     @Override
     protected void configure() {
         // Ambiguous definitions go here
