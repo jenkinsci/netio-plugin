@@ -1,6 +1,7 @@
 package com.tngtech.internal.plugclient;
 
 import com.google.common.base.Predicate;
+import com.tngtech.internal.helpers.HashHelper;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.SynchronousTelnetClient;
 import org.joda.time.DateTime;
@@ -32,21 +33,27 @@ public class NetioPlugClient implements PlugClient {
         }
     }
 
-    private PlugConfig config;
+    private final HashHelper hashHelper;
 
-    private SynchronousTelnetClient telnetClient;
+    private final SynchronousTelnetClient telnetClient;
 
-    public NetioPlugClient(SynchronousTelnetClient telnetClient, PlugConfig config) {
-        this.config = config;
+    private final PlugConfig config;
+
+    public NetioPlugClient(HashHelper hashHelper, SynchronousTelnetClient telnetClient, PlugConfig config) {
+        this.hashHelper = hashHelper;
         this.telnetClient = telnetClient;
+        this.config = config;
     }
 
     public void login() {
         telnetClient.connect();
 
-        waitForAcknowledge(STATUS_LOGIN);
-        sendAndWaitForAcknowledge(getLoginMessage(), STATUS_OK);
+        String welcomeMessage = stripCommandCode(waitForAcknowledge(STATUS_LOGIN));
+        String hashValue = getWelcomeHashcode(welcomeMessage);
+
+        sendAndWaitForAcknowledge(getLoginMessage(hashValue), STATUS_OK);
     }
+
 
     public void enablePlugPort() {
         sendAndWaitForAcknowledge(getPortEnableDisableMessage(PLUG_ON), STATUS_OK);
@@ -69,6 +76,10 @@ public class NetioPlugClient implements PlugClient {
     public void disconnect() {
         sendAndWaitForAcknowledge(getQuitMessage(), STATUS_QUIT);
         telnetClient.disconnect();
+    }
+
+    private String getWelcomeHashcode(String welcomeMessage) {
+        return welcomeMessage.replaceAll("^HELLO ", "").replaceAll(" - KSHELL.+", "");
     }
 
     private String stripCommandCode(String dateText) {
@@ -98,10 +109,12 @@ public class NetioPlugClient implements PlugClient {
         return timeToStart.plus(new Period(0, 0, 30, 0));
     }
 
-    private String getLoginMessage() {
-        // login <name> <password>
-        // TODO clogin <name> <encrypted_password>
-        return String.format("login %s %s", config.getAdminAccount(), config.getAdminPassword());
+    private String getLoginMessage(String hashValue) {
+        String passwordToBeEncrypted = config.getAdminAccount() + config.getAdminPassword() + hashValue;
+        String encryptedPassword = hashHelper.hashString(passwordToBeEncrypted, "MD5");
+
+        // clogin <name> <password>
+        return String.format("clogin %s %s", config.getAdminAccount(), encryptedPassword);
     }
 
     private String getSystemTimeMessage() {

@@ -1,5 +1,6 @@
 package com.tngtech.internal.plugclient;
 
+import com.tngtech.internal.helpers.HashHelper;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.SynchronousTelnetClient;
 import com.tngtech.internal.telnet.TelnetClientCreator;
@@ -37,13 +38,16 @@ public class PlugClientCreatorTest {
     private TelnetClientCreator telnetClientCreator;
 
     @Mock
+    private HashHelper hashHelper;
+
+    @Mock
     private SynchronousTelnetClient telnetClient;
 
     private PlugClientCreator plugClientCreator;
 
     @Before
     public void setUp() throws Exception {
-        plugClientCreator = new PlugClientCreator(telnetClientCreator);
+        plugClientCreator = new PlugClientCreator(telnetClientCreator, hashHelper);
         when(telnetClientCreator.getSynchronousTelnetClient(any(PlugConfig.class))).thenReturn(telnetClient);
 
         whenNew(NetioPlugClient.class).withAnyArguments().thenReturn(netioPlugClient);
@@ -55,7 +59,7 @@ public class PlugClientCreatorTest {
 
         assertThat(plugClient, is(sameInstance((PlugClient) netioPlugClient)));
         verify(telnetClientCreator).getSynchronousTelnetClient(plugConfig);
-        verifyNew(NetioPlugClient.class).withArguments(telnetClient, plugConfig);
+        verifyNew(NetioPlugClient.class).withArguments(hashHelper, telnetClient, plugConfig);
     }
 
     @Test

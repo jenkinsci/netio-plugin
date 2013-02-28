@@ -1,5 +1,6 @@
 package com.tngtech.internal.plugclient;
 
+import com.tngtech.internal.helpers.HashHelper;
 import com.tngtech.internal.helpers.IntegrationTest;
 import com.tngtech.internal.helpers.TestPlugConfig;
 import com.tngtech.internal.plug.PlugConfig;
@@ -15,7 +16,7 @@ public class NetioPlugClientIntegrationTest {
     @Before
     public void setUp() {
         PlugConfig plugConfig = TestPlugConfig.getIntegrationTestConfig();
-        client = new NetioPlugClient(new TelnetClientCreator().getSynchronousTelnetClient(plugConfig), plugConfig);
+        client = new NetioPlugClient(new HashHelper(), new TelnetClientCreator().getSynchronousTelnetClient(plugConfig), plugConfig);
     }
 
     @Test

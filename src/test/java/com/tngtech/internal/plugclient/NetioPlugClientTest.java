@@ -1,6 +1,7 @@
 package com.tngtech.internal.plugclient;
 
 import com.google.common.base.Predicate;
+import com.tngtech.internal.helpers.HashHelper;
 import com.tngtech.internal.plug.Plug;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.SynchronousTelnetClient;
@@ -16,13 +17,18 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
 public class NetioPlugClientTest {
+    @Mock
+    private HashHelper hashHelper;
+
     @Mock
     private SynchronousTelnetClient telnetClient;
 
@@ -33,24 +39,30 @@ public class NetioPlugClientTest {
 
     @Before
     public void setUp() {
-        client = new NetioPlugClient(telnetClient, plugConfig);
+        client = new NetioPlugClient(hashHelper, telnetClient, plugConfig);
 
         when(plugConfig.getAdminAccount()).thenReturn("adminAccount");
         when(plugConfig.getAdminPassword()).thenReturn("adminPassword");
         when(plugConfig.getPlug()).thenReturn(Plug.PLUG2);
+
+        when(hashHelper.hashString(anyString(), anyString())).thenReturn("encryptedValue");
     }
 
     @Test
     public void testLogin() {
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("100 HELLO hashValue - KSHELL V1.3");
+
         client.login();
 
         ArgumentCaptor<Predicate> captorForConnectMessagePredicate = ArgumentCaptor.forClass(Predicate.class);
         ArgumentCaptor<Predicate> captorForLoginMessagePredicate = ArgumentCaptor.forClass(Predicate.class);
 
+        verify(hashHelper).hashString("adminAccountadminPasswordhashValue", "MD5");
+
         InOrder inOrder = inOrder(telnetClient);
         inOrder.verify(telnetClient).connect();
         inOrder.verify(telnetClient).waitForMessage(captorForConnectMessagePredicate.capture(), eq(1000));
-        inOrder.verify(telnetClient).send("login adminAccount adminPassword");
+        inOrder.verify(telnetClient).send("clogin adminAccount encryptedValue");
         inOrder.verify(telnetClient).waitForMessage(captorForLoginMessagePredicate.capture(), eq(1000));
 
         assertThatPredicateReturnsTrueForCode(captorForConnectMessagePredicate.getValue(), 100);

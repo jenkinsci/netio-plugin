@@ -1,6 +1,7 @@
 package com.tngtech.internal.plugclient;
 
 import com.google.inject.Inject;
+import com.tngtech.internal.helpers.HashHelper;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.TelnetClientCreator;
 
@@ -12,9 +13,12 @@ public class PlugClientCreator {
 
     private TelnetClientCreator telnetClientCreator;
 
+    private HashHelper hashHelper;
+
     @Inject
-    public PlugClientCreator(TelnetClientCreator telnetClientCreator) {
+    public PlugClientCreator(TelnetClientCreator telnetClientCreator, HashHelper hashHelper) {
         this.telnetClientCreator = telnetClientCreator;
+        this.hashHelper = hashHelper;
     }
 
     public PlugClientCreator withPlugConfig(PlugConfig plugConfig) {
@@ -24,6 +28,6 @@ public class PlugClientCreator {
 
     public PlugClient createClient() {
         checkState(plugConfig != null, "No plug config has been set so far");
-        return new NetioPlugClient(telnetClientCreator.getSynchronousTelnetClient(plugConfig), plugConfig);
+        return new NetioPlugClient(hashHelper, telnetClientCreator.getSynchronousTelnetClient(plugConfig), plugConfig);
     }
 }
