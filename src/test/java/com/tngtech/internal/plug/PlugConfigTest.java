@@ -9,12 +9,14 @@ public class PlugConfigTest {
 
     @Test
     public void testConfig() {
-        PlugConfig config = new PlugConfig("hostName", 80, "adminAccount", "adminPassword", "PLUG1");
+        PlugConfig config = new PlugConfig("hostName", 80, "adminAccount", "adminPassword", "PLUG1", 60, 30);
 
         assertThat(config.getHostName(), is("hostName"));
         assertThat(config.getHostPort(), is(80));
         assertThat(config.getAdminAccount(), is("adminAccount"));
         assertThat(config.getAdminPassword(), is("adminPassword"));
         assertThat(config.getPlug(), is(Plug.PLUG1));
+        assertThat(config.getDelaySeconds(), is(60));
+        assertThat(config.getActivationDurationSeconds(), is(30));
     }
 }

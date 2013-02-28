@@ -1,5 +1,6 @@
 package com.tngtech.internal.context;
 
+import com.tngtech.internal.helpers.TestPlugConfig;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.plugclient.PlugClient;
 import com.tngtech.internal.plugclient.PlugClientCreator;
@@ -18,7 +19,7 @@ public class ContextTest {
         assertThat(plugClientCreator, is(not(nullValue())));
 
         // Then assert that properties are injected correctly
-        PlugConfig config = new PlugConfig("hostName", 80, "adminAccount", "adminPassword", "PLUG1");
+        PlugConfig config = TestPlugConfig.getUnitTestConfig();
         PlugClient plugClient = plugClientCreator.withPlugConfig(config).createClient();
         assertThat(plugClient, is(not(nullValue())));
     }

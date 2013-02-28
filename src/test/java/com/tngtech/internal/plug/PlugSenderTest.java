@@ -1,6 +1,7 @@
 package com.tngtech.internal.plug;
 
 import com.tngtech.internal.context.Context;
+import com.tngtech.internal.helpers.TestPlugConfig;
 import com.tngtech.internal.plugclient.PlugClient;
 import com.tngtech.internal.plugclient.PlugClientCreator;
 import hudson.model.BuildListener;
@@ -47,7 +48,7 @@ public class PlugSenderTest {
 
         when(buildListener.getLogger()).thenReturn(logger);
 
-        plugConfig = new PlugConfig("hostName", 80, "adminAccount", "adminPassword", "PLUG1");
+        plugConfig = TestPlugConfig.getUnitTestConfig();
         plugSender = new PlugSender();
     }
 

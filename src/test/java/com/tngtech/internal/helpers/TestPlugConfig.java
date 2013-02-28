@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class TestPlugConfig {
     public static PlugConfig getUnitTestConfig() {
-        return new PlugConfig("hostName", 80, "adminAccount", "adminPassword", "PLUG1");
+        return new PlugConfig("hostName", 80, "adminAccount", "adminPassword", "PLUG1", 60, 30);
     }
 
     public static PlugConfig getIntegrationTestConfig() {
@@ -19,6 +19,9 @@ public class TestPlugConfig {
 
         String plugName = properties.get("plug.name").toString();
 
-        return new PlugConfig(hostName, hostPort, adminAccount, adminPasword, plugName);
+        int delaySeconds = Integer.valueOf(properties.get("time.delay").toString());
+        int activationDurationSeconds = Integer.valueOf(properties.get("time.activation.duration").toString());
+
+        return new PlugConfig(hostName, hostPort, adminAccount, adminPasword, plugName, delaySeconds, activationDurationSeconds);
     }
 }

@@ -49,8 +49,9 @@ public class NotifyPlugRecorder extends Recorder {
             return true;
         }
 
+        // TODO create config values for delay and activation duration
         PlugConfig plugConfig = new PlugConfig(getDescriptor().getHostName(), getDescriptor().getHostPort(),
-                getDescriptor().getAdminAccount(), getDescriptor().getAdminPassword(), getPlugNumber());
+                getDescriptor().getAdminAccount(), getDescriptor().getAdminPassword(), getPlugNumber(), 61 ,31);
         new PlugSender().send(listener, plugConfig);
         return true;
     }

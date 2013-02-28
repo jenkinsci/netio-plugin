@@ -7,9 +7,12 @@ public class PlugConfig {
     private final String adminAccount;
     private final String adminPassword;
 
-    private Plug plug;
+    private final Plug plug;
 
-    public PlugConfig(String hostName, int hostPort, String adminAccount, String adminPassword, String plugNumberId) {
+    private final int delaySeconds;
+    private final int activationDurationSeconds;
+
+    public PlugConfig(String hostName, int hostPort, String adminAccount, String adminPassword, String plugNumberId, int delaySeconds, int activationDurationSeconds) {
         this.hostName = hostName;
         this.hostPort = hostPort;
 
@@ -17,6 +20,9 @@ public class PlugConfig {
         this.adminPassword = adminPassword;
 
         this.plug = Plug.valueOf(plugNumberId);
+
+        this.delaySeconds = delaySeconds;
+        this.activationDurationSeconds = activationDurationSeconds;
     }
 
     public String getHostName() {
@@ -37,5 +43,13 @@ public class PlugConfig {
 
     public Plug getPlug() {
         return plug;
+    }
+
+    public int getDelaySeconds() {
+        return delaySeconds;
+    }
+
+    public int getActivationDurationSeconds() {
+        return activationDurationSeconds;
     }
 }

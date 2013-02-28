@@ -100,7 +100,7 @@ public class NotifyPlugRecorderTest {
         boolean result = notifyPlugRecorder.perform(build, null, null);
 
         assertThat(result, is(true));
-        verifyNew(PlugConfig.class).withArguments("hostName", 80, "adminAccount", "adminPassword", "PLUG1");
+        verifyNew(PlugConfig.class).withArguments("hostName", 80, "adminAccount", "adminPassword", "PLUG1", 61, 31);
         verify(plugSender, times(1)).send(any(BuildListener.class), eq(plugConfig));
     }
 }
