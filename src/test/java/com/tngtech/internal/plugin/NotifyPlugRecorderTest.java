@@ -96,11 +96,13 @@ public class NotifyPlugRecorderTest {
         when(descriptor.getHostPort()).thenReturn(80);
         when(descriptor.getAdminAccount()).thenReturn("adminAccount");
         when(descriptor.getAdminPassword()).thenReturn("adminPassword");
+        when(descriptor.getDelaySeconds()).thenReturn(61);
+        when(descriptor.getActivationDurationSeconds()).thenReturn(30);
 
         boolean result = notifyPlugRecorder.perform(build, null, null);
 
         assertThat(result, is(true));
-        verifyNew(PlugConfig.class).withArguments("hostName", 80, "adminAccount", "adminPassword", "PLUG1", 61, 31);
+        verifyNew(PlugConfig.class).withArguments("hostName", 80, "adminAccount", "adminPassword", "PLUG1", 61, 30);
         verify(plugSender, times(1)).send(any(BuildListener.class), eq(plugConfig));
     }
 }

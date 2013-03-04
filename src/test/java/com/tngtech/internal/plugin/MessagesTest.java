@@ -38,6 +38,18 @@ public class MessagesTest {
     }
 
     @Test
+    public void testDefaults_delay() {
+        assertThat(Messages.defaults_delay(), is("61"));
+        assertThat(Messages._defaults_delay().toString(), is("61"));
+    }
+
+    @Test
+    public void testDefaults_activation_duration() {
+        assertThat(Messages.defaults_activation_duration(), is("30"));
+        assertThat(Messages._defaults_activation_duration().toString(), is("30"));
+    }
+    
+    @Test
     public void testWarning_tooShort() {
         assertThat(Messages.warning_tooShort(), is("The text seems to be too short"));
         assertThat(Messages._warning_tooShort().toString(), is("The text seems to be too short"));
@@ -50,8 +62,8 @@ public class MessagesTest {
     }
 
     @Test
-    public void testError_noNumber() {
-        assertThat(Messages.error_noNumber(), is("Please enter a number"));
-        assertThat(Messages._error_noNumber().toString(), is("Please enter a number"));
+    public void testError_wrongNumber() {
+        assertThat(Messages.error_wrongNumber(), is("Please enter a number between %d and %d"));
+        assertThat(Messages._error_wrongNumber().toString(), is("Please enter a number between %d and %d"));
     }
 }

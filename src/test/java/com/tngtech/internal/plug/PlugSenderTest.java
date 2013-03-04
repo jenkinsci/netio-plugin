@@ -55,7 +55,7 @@ public class PlugSenderTest {
     @Test
     public void testSend() {
         plugSender.send(buildListener, plugConfig);
-        verify(logger).println("Using connection to adminAccount:adminPassword@hostName:80 for plug number 1");
+        verify(logger).println("Using connection to adminAccount:adminPassword@hostName:80 for plug number 1, delaying 60 seconds, then activating for 30 seconds");
 
         verifyStatic();
         Context.getBean(PlugClientCreator.class);

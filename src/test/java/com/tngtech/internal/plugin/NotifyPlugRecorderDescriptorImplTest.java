@@ -21,11 +21,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
@@ -66,6 +62,10 @@ public class NotifyPlugRecorderDescriptorImplTest {
         assertThat(descriptor.getAdminAccount(), is("admin"));
         assertThat(descriptor.getDefaultAdminPassword(), is("admin"));
         assertThat(descriptor.getAdminPassword(), is("admin"));
+        assertThat(descriptor.getDefaultDelaySeconds(), is("61"));
+        assertThat(descriptor.getDelaySeconds(), is(61));
+        assertThat(descriptor.getDefaultActivationDurationSeconds(), is("30"));
+        assertThat(descriptor.getActivationDurationSeconds(), is(30));
     }
 
     @Test
@@ -77,9 +77,11 @@ public class NotifyPlugRecorderDescriptorImplTest {
 
     @Test
     public void checkHostPortValidity() {
-        assertValidationResult(descriptor.doCheckHostPort(""), FormValidation.Kind.ERROR, "Please enter a number");
-        assertValidationResult(descriptor.doCheckHostPort("sho"), FormValidation.Kind.ERROR, "Please enter a number");
+        assertValidationResult(descriptor.doCheckHostPort(""), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
+        assertValidationResult(descriptor.doCheckHostPort("sho"), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
         assertValidationResult(descriptor.doCheckHostPort("1234"), FormValidation.Kind.OK, null);
+        assertValidationResult(descriptor.doCheckHostPort("-1"), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
+        assertValidationResult(descriptor.doCheckHostPort("70000"), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
     }
 
     @Test
@@ -94,6 +96,24 @@ public class NotifyPlugRecorderDescriptorImplTest {
         assertValidationResult(descriptor.doCheckAdminPassword(""), FormValidation.Kind.ERROR, "Please enter some text");
         assertValidationResult(descriptor.doCheckAdminPassword("pas"), FormValidation.Kind.WARNING, "The text seems to be too short");
         assertValidationResult(descriptor.doCheckAdminPassword("password"), FormValidation.Kind.OK, null);
+    }
+
+    @Test
+    public void checkDelaySecondsValidity() {
+        assertValidationResult(descriptor.doCheckDelaySeconds(""), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
+        assertValidationResult(descriptor.doCheckDelaySeconds("sho"), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
+        assertValidationResult(descriptor.doCheckDelaySeconds("30"), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
+        assertValidationResult(descriptor.doCheckDelaySeconds("1500"), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
+        assertValidationResult(descriptor.doCheckDelaySeconds("61"), FormValidation.Kind.OK, null);
+    }
+
+    @Test
+    public void checkActivationDurationSecondsValidity() {
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds(""), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds("sho"), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds("5"), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds("1500"), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds("30"), FormValidation.Kind.OK, null);
     }
 
     @Test
@@ -116,6 +136,8 @@ public class NotifyPlugRecorderDescriptorImplTest {
         when(formData.getInt("hostPort")).thenReturn(80);
         when(formData.getString("adminAccount")).thenReturn("adminAccount");
         when(formData.getString("adminPassword")).thenReturn("adminPassword");
+        when(formData.getInt("delaySeconds")).thenReturn(61);
+        when(formData.getInt("activationDurationSeconds")).thenReturn(30);
 
         boolean response = descriptor.configure(request, formData);
 
@@ -123,6 +145,8 @@ public class NotifyPlugRecorderDescriptorImplTest {
         assertThat(descriptor.getHostPort(), is(80));
         assertThat(descriptor.getAdminAccount(), is("adminAccount"));
         assertThat(descriptor.getAdminPassword(), is("adminPassword"));
+        assertThat(descriptor.getDelaySeconds(), is(61));
+        assertThat(descriptor.getActivationDurationSeconds(), is(30));
 
         verify(descriptor).save();
         assertThat(response, is(true));

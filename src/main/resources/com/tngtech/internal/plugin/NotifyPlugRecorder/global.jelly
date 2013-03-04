@@ -2,18 +2,28 @@
 
   <f:section title="${%text.section}">
     <f:entry title="${%text.host}" field="hostName">
-      <f:textbox default="${descriptor.getDefaultHostName()}" />
+        <f:textbox default="${descriptor.getDefaultHostName()}" />
     </f:entry>
     <f:entry title="${%text.port}" field="hostPort">
-      <f:textbox default="${descriptor.getDefaultHostPort()}" />
+        <f:textbox default="${descriptor.getDefaultHostPort()}" />
     </f:entry>
 
+    <br /><br />
     <f:entry title="${%text.admin.account}" field="adminAccount">
-      <f:textbox default="${descriptor.getDefaultAdminAccount()}" />
+        <f:textbox default="${descriptor.getDefaultAdminAccount()}" />
     </f:entry>
     <f:entry title="${%text.admin.password}" field="adminPassword">
-      <f:password default="${descriptor.getDefaultAdminPassword()}" />
+        <f:password default="${descriptor.getDefaultAdminPassword()}" />
     </f:entry>
+    
+    <br /><br />
+    <f:entry title="${%text.delay}" field="delaySeconds">
+        <f:textbox default="${descriptor.getDefaultDelaySeconds()}" />
+    </f:entry>
+    <f:entry title="${%text.activation.duration}" field="activationDurationSeconds">
+        <f:textbox default="${descriptor.getDefaultActivationDurationSeconds()}" />
+    </f:entry>
+
   </f:section>
 
 </j:jelly>

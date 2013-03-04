@@ -49,9 +49,9 @@ public class NotifyPlugRecorder extends Recorder {
             return true;
         }
 
-        // TODO create config values for delay and activation duration
         PlugConfig plugConfig = new PlugConfig(getDescriptor().getHostName(), getDescriptor().getHostPort(),
-                getDescriptor().getAdminAccount(), getDescriptor().getAdminPassword(), getPlugNumber(), 61 ,31);
+                getDescriptor().getAdminAccount(), getDescriptor().getAdminPassword(), getPlugNumber(),
+                getDescriptor().getDelaySeconds(), getDescriptor().getActivationDurationSeconds());
         new PlugSender().send(listener, plugConfig);
         return true;
     }
@@ -69,6 +69,9 @@ public class NotifyPlugRecorder extends Recorder {
 
         private String adminAccount = getDefaultAdminAccount();
         private String adminPassword = getDefaultAdminPassword();
+
+        private int delaySeconds = Integer.parseInt(getDefaultDelaySeconds());
+        private int activationDurationSeconds = Integer.parseInt(getDefaultActivationDurationSeconds());
 
         public DescriptorImpl() {
             super(NotifyPlugRecorder.class);
@@ -100,6 +103,14 @@ public class NotifyPlugRecorder extends Recorder {
             return Messages.defaults_admin_password();
         }
 
+        public String getDefaultDelaySeconds() {
+            return Messages.defaults_delay();
+        }
+
+        public String getDefaultActivationDurationSeconds() {
+            return Messages.defaults_activation_duration();
+        }
+
         public String getHostName() {
             return hostName;
         }
@@ -116,16 +127,32 @@ public class NotifyPlugRecorder extends Recorder {
             return adminPassword;
         }
 
+        public int getDelaySeconds() {
+            return delaySeconds;
+        }
+
+        public int getActivationDurationSeconds() {
+            return activationDurationSeconds;
+        }
+
         public FormValidation doCheckHostName(@QueryParameter String hostName) {
             return checkForExistence(hostName);
         }
 
         public FormValidation doCheckHostPort(@QueryParameter String hostPort) {
-            return checkForNumber(hostPort);
+            return checkForNumber(hostPort, 0, 65536);
         }
 
         public FormValidation doCheckAdminAccount(@QueryParameter String adminAccount) {
             return checkForExistence(adminAccount);
+        }
+
+        public FormValidation doCheckDelaySeconds(@QueryParameter String delaySeconds) {
+            return checkForNumber(delaySeconds, 60, 1000);
+        }
+
+        public FormValidation doCheckActivationDurationSeconds(@QueryParameter String activationDurationSeconds) {
+            return checkForNumber(activationDurationSeconds, 10, 1000);
         }
 
         public FormValidation doCheckAdminPassword(@QueryParameter String adminPassword) {
@@ -140,12 +167,18 @@ public class NotifyPlugRecorder extends Recorder {
             return FormValidation.ok();
         }
 
-        private FormValidation checkForNumber(String numberText) {
+        private FormValidation checkForNumber(String numberText, int minValue, int maxValue) {
             try {
-                Integer.parseInt(numberText);
+                testNumber(Integer.parseInt(numberText), minValue, maxValue);
                 return FormValidation.ok();
             } catch (NumberFormatException e) {
-                return FormValidation.error(Messages.error_noNumber());
+                return FormValidation.error(String.format(Messages.error_wrongNumber(), minValue, maxValue));
+            }
+        }
+
+        private void testNumber(int number, int minValue, int maxValue) {
+            if (number < minValue || number > maxValue) {
+                throw new NumberFormatException("Entered number is out of bounds");
             }
         }
 
@@ -165,6 +198,8 @@ public class NotifyPlugRecorder extends Recorder {
             hostPort = formData.getInt("hostPort");
             adminAccount = formData.getString("adminAccount");
             adminPassword = formData.getString("adminPassword");
+            delaySeconds = formData.getInt("delaySeconds");
+            activationDurationSeconds = formData.getInt("activationDurationSeconds");
 
             save();
             return super.configure(req, formData);

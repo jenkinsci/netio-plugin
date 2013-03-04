@@ -102,10 +102,12 @@ public class NetioPlugClient implements PlugClient {
 
     private DateTime getTimeToStart(DateTime systemTime) {
         // The plug does not allow a start time that less than one minute away
+        // TODO use plug config second values        
         return systemTime.plus(new Period(0, 1, 1, 0));
     }
 
     protected DateTime getTimeToEnd(DateTime timeToStart) {
+        // TODO use plug config second values
         return timeToStart.plus(new Period(0, 0, 30, 0));
     }
 

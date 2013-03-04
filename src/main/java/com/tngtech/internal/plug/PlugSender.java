@@ -13,9 +13,10 @@ public class PlugSender {
     }
 
     private void logConfig(BuildListener listener, PlugConfig config) {
-        String output = String.format("Using connection to %s:%s@%s:%d for plug number %s",
+        String output = String.format("Using connection to %s:%s@%s:%d for plug number %s, delaying %d seconds, then activating for %d seconds",
                 config.getAdminAccount(), config.getAdminPassword(), config.getHostName(),
-                config.getHostPort(), config.getPlug().getPlugNumber());
+                config.getHostPort(), config.getPlug().getPlugNumber(),
+                config.getDelaySeconds(), config.getActivationDurationSeconds());
         listener.getLogger().println(output);
     }
 
