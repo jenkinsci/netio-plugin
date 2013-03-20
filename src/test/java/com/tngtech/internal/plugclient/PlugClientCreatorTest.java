@@ -1,6 +1,5 @@
 package com.tngtech.internal.plugclient;
 
-import com.tngtech.internal.helpers.HashHelper;
 import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.SynchronousTelnetClient;
 import com.tngtech.internal.telnet.TelnetClientCreator;
@@ -18,9 +17,7 @@ import static org.hamcrest.core.IsSame.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.verifyNew;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PlugClientCreator.class)
@@ -38,7 +35,7 @@ public class PlugClientCreatorTest {
     private TelnetClientCreator telnetClientCreator;
 
     @Mock
-    private HashHelper hashHelper;
+    private NetioPlugMessages messages;
 
     @Mock
     private SynchronousTelnetClient telnetClient;
@@ -47,7 +44,7 @@ public class PlugClientCreatorTest {
 
     @Before
     public void setUp() throws Exception {
-        plugClientCreator = new PlugClientCreator(telnetClientCreator, hashHelper);
+        plugClientCreator = new PlugClientCreator(telnetClientCreator, messages);
         when(telnetClientCreator.getSynchronousTelnetClient(any(PlugConfig.class))).thenReturn(telnetClient);
 
         whenNew(NetioPlugClient.class).withAnyArguments().thenReturn(netioPlugClient);
@@ -59,7 +56,7 @@ public class PlugClientCreatorTest {
 
         assertThat(plugClient, is(sameInstance((PlugClient) netioPlugClient)));
         verify(telnetClientCreator).getSynchronousTelnetClient(plugConfig);
-        verifyNew(NetioPlugClient.class).withArguments(hashHelper, telnetClient, plugConfig);
+        verifyNew(NetioPlugClient.class).withArguments(telnetClient, messages, plugConfig);
     }
 
     @Test

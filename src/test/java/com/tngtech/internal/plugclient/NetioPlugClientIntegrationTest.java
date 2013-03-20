@@ -16,11 +16,11 @@ public class NetioPlugClientIntegrationTest {
     @Before
     public void setUp() {
         PlugConfig plugConfig = TestPlugConfig.getIntegrationTestConfig();
-        client = new NetioPlugClient(new HashHelper(), new TelnetClientCreator().getSynchronousTelnetClient(plugConfig), plugConfig);
+        client = new NetioPlugClient(new TelnetClientCreator().getSynchronousTelnetClient(plugConfig), new NetioPlugMessages(new HashHelper()), plugConfig);
     }
 
     @Test
-    public void testLogin() throws InterruptedException {
+    public void testManuallyEnablingThePlugPort() throws InterruptedException {
         client.login();
 
         client.enablePlugPort();
@@ -31,7 +31,7 @@ public class NetioPlugClientIntegrationTest {
     }
 
     @Test
-    public void testGetSystemTime() {
+    public void testEnableClientTemporarily() {
         client.login();
         client.enablePlugPortTemporarily();
         client.disconnect();
