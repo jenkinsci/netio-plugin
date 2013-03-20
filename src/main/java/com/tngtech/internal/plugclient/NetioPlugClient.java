@@ -64,8 +64,11 @@ public class NetioPlugClient implements PlugClient {
 
         int secondsBetweenStartAndEndTime = Seconds.secondsBetween(startTime, endTime).getSeconds();
         int secondsBetweenNowAndStartTime = Seconds.secondsBetween(systemTime, startTime).getSeconds();
+        int secondsBetweenNowAndEndTime = Seconds.secondsBetween(systemTime, endTime).getSeconds();
 
-        return secondsBetweenStartAndEndTime != config.getActivationDurationSeconds() || secondsBetweenNowAndStartTime >= config.getDelaySeconds();
+        return secondsBetweenNowAndEndTime < 0 ||
+               secondsBetweenStartAndEndTime != config.getActivationDurationSeconds() ||
+               secondsBetweenNowAndStartTime >= config.getDelaySeconds();
     }
 
     public void enablePlugPortTemporarily() {

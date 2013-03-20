@@ -79,9 +79,8 @@ public class NetioPlugMessages {
         return dateTimeFormatter.parseDateTime(timeText);
     }
 
-
     public boolean isTimerSet(String timerMessageText) {
-        return timerMessageText.contains("timer");
+        return timerMessageText.contains("once");
     }
 
     public DateTime getStartTimeFromTimerMessage(String response) {

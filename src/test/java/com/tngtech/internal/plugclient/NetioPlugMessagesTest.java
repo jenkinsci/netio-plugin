@@ -77,8 +77,8 @@ public class NetioPlugMessagesTest {
 
     @Test
     public void testIsTimerSet() {
-        assertThat(messages.isTimerSet("250 once 19:14:56 19:15:26 1111111"), is(false));
-        assertThat(messages.isTimerSet("250 timer 08:00:00 17:30:00 1111111"), is(true));
+        assertThat(messages.isTimerSet("250 manual"), is(false));
+        assertThat(messages.isTimerSet("250 once 08:00:00 17:30:00 1111111"), is(true));
     }
 
     @Test

@@ -8,6 +8,7 @@ import hudson.model.BuildListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -16,9 +17,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.PrintStream;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
@@ -56,9 +55,9 @@ public class PlugSenderTest {
     @Test
     public void testSendIfThePlugShouldBeEnabled() {
         when(plugClient.shouldEnable()).thenReturn(true);
-        
+
         plugSender.send(buildListener, plugConfig);
-        verify(logger).println("Using connection to adminAccount:adminPassword@hostName:80 for plug number 1, delaying 60 seconds, then activating for 30 seconds");
+        verify(logger).println("Using connection to adminAccount@hostName:80 for plug number 1, delaying 60 seconds, then activating for 30 seconds");
 
         verifyStatic();
         Context.getBean(PlugClientCreator.class);
@@ -66,10 +65,13 @@ public class PlugSenderTest {
         verify(plugClientCreator).withPlugConfig(plugConfig);
         verify(plugClientCreator).createClient();
 
-        verify(plugClient).login();
-        verify(plugClient).shouldEnable();
-        verify(plugClient).enablePlugPortTemporarily();
-        verify(plugClient).disconnect();
+        InOrder inOrder = inOrder(plugClient);
+        inOrder.verify(plugClient).login();
+        inOrder.verify(plugClient).shouldEnable();
+        inOrder.verify(plugClient).disablePlugPort();
+        inOrder.verify(plugClient).enablePlugPortTemporarily();
+        inOrder.verify(plugClient).disconnect();
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -77,17 +79,10 @@ public class PlugSenderTest {
         when(plugClient.shouldEnable()).thenReturn(false);
 
         plugSender.send(buildListener, plugConfig);
-        verify(logger).println("Using connection to adminAccount:adminPassword@hostName:80 for plug number 1, delaying 60 seconds, then activating for 30 seconds");
-
-        verifyStatic();
-        Context.getBean(PlugClientCreator.class);
-
-        verify(plugClientCreator).withPlugConfig(plugConfig);
-        verify(plugClientCreator).createClient();
 
         verify(plugClient).login();
-        verify(plugClient).shouldEnable();
-        // The plug will not be activated
+        // The plug will not be activated/deactivated
+        verify(plugClient, never()).enablePlugPortTemporarily();
         verify(plugClient, never()).enablePlugPortTemporarily();
         verify(plugClient).disconnect();
     }

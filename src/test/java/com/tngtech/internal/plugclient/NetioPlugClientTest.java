@@ -135,6 +135,19 @@ public class NetioPlugClientTest {
     }
 
     @Test
+    public void whenTimerHasAlreadyEndedShouldEnableShouldReturnTrue() {
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("systemTimeResponseMessage", "timerResponseMessage");
+
+        when(messages.isTimerSet("timerResponseMessage")).thenReturn(false);
+        when(messages.getSystemTime("systemTimeResponseMessage")).thenReturn(new DateTime("2013-01-02T19:32:00"));
+        // The timer period has already expired
+        when(messages.getStartTimeFromTimerMessage("timerResponseMessage")).thenReturn(new DateTime("2013-01-02T19:30:30"));
+        when(messages.getEndTimeFromTimerMessage("timerResponseMessage")).thenReturn(new DateTime("2013-01-02T19:31:00"));
+
+        assertThat(client.shouldEnable(), is(true));
+    }
+
+    @Test
     public void whenNoTimerIsSetShouldEnableShouldReturnTrue() {
         when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("systemTimeResponseMessage", "timerResponseMessage");
 
