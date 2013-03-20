@@ -140,7 +140,9 @@ public class NotifyPlugRecorder extends Recorder {
         }
 
         public FormValidation doCheckHostPort(@QueryParameter String hostPort) {
-            return checkForNumber(hostPort, 0, 65536);
+            int minPortNumber = 0;
+            int maxPortNumber = 65535;
+            return checkForNumber(hostPort, minPortNumber, maxPortNumber, Messages.error_wrongPortNumber());
         }
 
         public FormValidation doCheckAdminAccount(@QueryParameter String adminAccount) {
@@ -148,11 +150,11 @@ public class NotifyPlugRecorder extends Recorder {
         }
 
         public FormValidation doCheckDelaySeconds(@QueryParameter String delaySeconds) {
-            return checkForNumber(delaySeconds, 60, 1000);
+            return checkForNumber(delaySeconds, 60, 1000, Messages.error_wrongDelayNumber());
         }
 
         public FormValidation doCheckActivationDurationSeconds(@QueryParameter String activationDurationSeconds) {
-            return checkForNumber(activationDurationSeconds, 10, 1000);
+            return checkForNumber(activationDurationSeconds, 10, 1000, Messages.error_wrongDurationNumber());
         }
 
         public FormValidation doCheckAdminPassword(@QueryParameter String adminPassword) {
@@ -167,12 +169,12 @@ public class NotifyPlugRecorder extends Recorder {
             return FormValidation.ok();
         }
 
-        private FormValidation checkForNumber(String numberText, int minValue, int maxValue) {
+        private FormValidation checkForNumber(String numberText, int minValue, int maxValue, String errorMessage) {
             try {
                 testNumber(Integer.parseInt(numberText), minValue, maxValue);
                 return FormValidation.ok();
             } catch (NumberFormatException e) {
-                return FormValidation.error(String.format(Messages.error_wrongNumber(), minValue, maxValue));
+                return FormValidation.error(String.format(errorMessage, minValue, maxValue));
             }
         }
 

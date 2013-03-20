@@ -48,7 +48,7 @@ public class MessagesTest {
         assertThat(Messages.defaults_activation_duration(), is("30"));
         assertThat(Messages._defaults_activation_duration().toString(), is("30"));
     }
-    
+
     @Test
     public void testWarning_tooShort() {
         assertThat(Messages.warning_tooShort(), is("The text seems to be too short"));
@@ -62,8 +62,22 @@ public class MessagesTest {
     }
 
     @Test
-    public void testError_wrongNumber() {
-        assertThat(Messages.error_wrongNumber(), is("Please enter a number between %d and %d"));
-        assertThat(Messages._error_wrongNumber().toString(), is("Please enter a number between %d and %d"));
+    public void testError_wrongPortNumber() {
+        assertThat(Messages.error_wrongPortNumber(), is("Please enter a port number between %d and %d"));
+        assertThat(Messages._error_wrongPortNumber().toString(), is("Please enter a port number between %d and %d"));
+    }
+
+    @Test
+    public void testError_wrongDelayNumber() {
+        assertThat(Messages.error_wrongDelayNumber(),
+                is("Please enter a delay (in seconds) between %d and %d; the plug cannot be programmed to use delays shorter than 1 minute"));
+        assertThat(Messages._error_wrongDelayNumber().toString(),
+                is("Please enter a delay (in seconds) between %d and %d; the plug cannot be programmed to use delays shorter than 1 minute"));
+    }
+
+    @Test
+    public void testError_wrongDurationNumber() {
+        assertThat(Messages.error_wrongDurationNumber(), is("Please enter a duration (in seconds) between %d and %d"));
+        assertThat(Messages._error_wrongDurationNumber().toString(), is("Please enter a duration (in seconds) between %d and %d"));
     }
 }

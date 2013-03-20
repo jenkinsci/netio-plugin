@@ -99,6 +99,4 @@ public class NetioPlugMessages {
     private String stripCommandCode(String dateText) {
         return dateText.replaceAll("^[\\S]*", "").trim();
     }
-
-
 }

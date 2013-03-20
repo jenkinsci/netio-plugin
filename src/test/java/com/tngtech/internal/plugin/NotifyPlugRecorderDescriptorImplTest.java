@@ -77,11 +77,11 @@ public class NotifyPlugRecorderDescriptorImplTest {
 
     @Test
     public void checkHostPortValidity() {
-        assertValidationResult(descriptor.doCheckHostPort(""), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
-        assertValidationResult(descriptor.doCheckHostPort("sho"), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
+        assertValidationResult(descriptor.doCheckHostPort(""), FormValidation.Kind.ERROR, "Please enter a port number between 0 and 65535");
+        assertValidationResult(descriptor.doCheckHostPort("sho"), FormValidation.Kind.ERROR, "Please enter a port number between 0 and 65535");
         assertValidationResult(descriptor.doCheckHostPort("1234"), FormValidation.Kind.OK, null);
-        assertValidationResult(descriptor.doCheckHostPort("-1"), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
-        assertValidationResult(descriptor.doCheckHostPort("70000"), FormValidation.Kind.ERROR, "Please enter a number between 0 and 65536");
+        assertValidationResult(descriptor.doCheckHostPort("-1"), FormValidation.Kind.ERROR, "Please enter a port number between 0 and 65535");
+        assertValidationResult(descriptor.doCheckHostPort("70000"), FormValidation.Kind.ERROR, "Please enter a port number between 0 and 65535");
     }
 
     @Test
@@ -100,19 +100,27 @@ public class NotifyPlugRecorderDescriptorImplTest {
 
     @Test
     public void checkDelaySecondsValidity() {
-        assertValidationResult(descriptor.doCheckDelaySeconds(""), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
-        assertValidationResult(descriptor.doCheckDelaySeconds("sho"), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
-        assertValidationResult(descriptor.doCheckDelaySeconds("30"), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
-        assertValidationResult(descriptor.doCheckDelaySeconds("1500"), FormValidation.Kind.ERROR, "Please enter a number between 60 and 1000");
+        assertValidationResult(descriptor.doCheckDelaySeconds(""), FormValidation.Kind.ERROR,
+                "Please enter a delay (in seconds) between 60 and 1000; the plug cannot be programmed to use delays shorter than 1 minute");
+        assertValidationResult(descriptor.doCheckDelaySeconds("sho"), FormValidation.Kind.ERROR,
+                "Please enter a delay (in seconds) between 60 and 1000; the plug cannot be programmed to use delays shorter than 1 minute");
+        assertValidationResult(descriptor.doCheckDelaySeconds("30"), FormValidation.Kind.ERROR,
+                "Please enter a delay (in seconds) between 60 and 1000; the plug cannot be programmed to use delays shorter than 1 minute");
+        assertValidationResult(descriptor.doCheckDelaySeconds("1500"), FormValidation.Kind.ERROR,
+                "Please enter a delay (in seconds) between 60 and 1000; the plug cannot be programmed to use delays shorter than 1 minute");
         assertValidationResult(descriptor.doCheckDelaySeconds("61"), FormValidation.Kind.OK, null);
     }
 
     @Test
     public void checkActivationDurationSecondsValidity() {
-        assertValidationResult(descriptor.doCheckActivationDurationSeconds(""), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
-        assertValidationResult(descriptor.doCheckActivationDurationSeconds("sho"), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
-        assertValidationResult(descriptor.doCheckActivationDurationSeconds("5"), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
-        assertValidationResult(descriptor.doCheckActivationDurationSeconds("1500"), FormValidation.Kind.ERROR, "Please enter a number between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds(""), FormValidation.Kind.ERROR,
+                "Please enter a duration (in seconds) between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds("sho"), FormValidation.Kind.ERROR,
+                "Please enter a duration (in seconds) between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds("5"), FormValidation.Kind.ERROR,
+                "Please enter a duration (in seconds) between 10 and 1000");
+        assertValidationResult(descriptor.doCheckActivationDurationSeconds("1500"), FormValidation.Kind.ERROR,
+                "Please enter a duration (in seconds) between 10 and 1000");
         assertValidationResult(descriptor.doCheckActivationDurationSeconds("30"), FormValidation.Kind.OK, null);
     }
 
