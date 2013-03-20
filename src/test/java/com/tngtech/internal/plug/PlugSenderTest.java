@@ -16,6 +16,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.PrintStream;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
@@ -53,7 +54,9 @@ public class PlugSenderTest {
     }
 
     @Test
-    public void testSend() {
+    public void testSendIfThePlugShouldBeEnabled() {
+        when(plugClient.shouldEnable()).thenReturn(true);
+        
         plugSender.send(buildListener, plugConfig);
         verify(logger).println("Using connection to adminAccount:adminPassword@hostName:80 for plug number 1, delaying 60 seconds, then activating for 30 seconds");
 
@@ -64,7 +67,28 @@ public class PlugSenderTest {
         verify(plugClientCreator).createClient();
 
         verify(plugClient).login();
+        verify(plugClient).shouldEnable();
         verify(plugClient).enablePlugPortTemporarily();
+        verify(plugClient).disconnect();
+    }
+
+    @Test
+    public void testSendIfThePlugShouldNotBeEnabled() {
+        when(plugClient.shouldEnable()).thenReturn(false);
+
+        plugSender.send(buildListener, plugConfig);
+        verify(logger).println("Using connection to adminAccount:adminPassword@hostName:80 for plug number 1, delaying 60 seconds, then activating for 30 seconds");
+
+        verifyStatic();
+        Context.getBean(PlugClientCreator.class);
+
+        verify(plugClientCreator).withPlugConfig(plugConfig);
+        verify(plugClientCreator).createClient();
+
+        verify(plugClient).login();
+        verify(plugClient).shouldEnable();
+        // The plug will not be activated
+        verify(plugClient, never()).enablePlugPortTemporarily();
         verify(plugClient).disconnect();
     }
 }

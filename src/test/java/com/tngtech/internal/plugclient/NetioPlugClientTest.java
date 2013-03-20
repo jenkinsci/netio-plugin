@@ -109,8 +109,79 @@ public class NetioPlugClientTest {
 
     @Test
     public void testShouldEnable() {
-        boolean shouldBeEnabled = client.shouldEnable();
-        // TODO test 
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("systemTimeResponseMessage", "timerResponseMessage");
+        when(messages.isTimerSet(anyString())).thenReturn(true);
+        when(messages.getSystemTime("systemTimeResponseMessage")).thenReturn(new DateTime("2013-01-02T19:30:00"));
+        when(messages.getStartTimeFromTimerMessage("timerResponseMessage")).thenReturn(new DateTime("2013-01-02T19:30:30"));
+        when(messages.getEndTimeFromTimerMessage("timerResponseMessage")).thenReturn(new DateTime("2013-01-02T19:32:00"));
+
+        client.shouldEnable();
+
+        ArgumentCaptor<Predicate> captorForSystemTimeMessagePredicate = ArgumentCaptor.forClass(Predicate.class);
+        ArgumentCaptor<Predicate> captorForTimerMessagePredicate = ArgumentCaptor.forClass(Predicate.class);
+
+        InOrder inOrder = inOrder(telnetClient);
+        inOrder.verify(telnetClient).send("systemTimeMessage");
+        inOrder.verify(telnetClient).waitForMessage(captorForSystemTimeMessagePredicate.capture(), eq(1000));
+        inOrder.verify(telnetClient).send("timerMessage");
+        inOrder.verify(telnetClient).waitForMessage(captorForTimerMessagePredicate.capture(), eq(1000));
+
+        assertThatPredicateReturnsTrueForCode(captorForSystemTimeMessagePredicate.getValue(), NetioPlugMessages.STATUS_OK);
+        assertThatPredicateReturnsTrueForCode(captorForTimerMessagePredicate.getValue(), NetioPlugMessages.STATUS_OK);
+
+        verify(messages).getSystemTime("systemTimeResponseMessage");
+        verify(messages).getStartTimeFromTimerMessage("timerResponseMessage");
+        verify(messages).getEndTimeFromTimerMessage("timerResponseMessage");
+    }
+
+    @Test
+    public void whenNoTimerIsSetShouldEnableShouldReturnTrue() {
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("systemTimeResponseMessage", "timerResponseMessage");
+
+        when(messages.isTimerSet("timerResponseMessage")).thenReturn(false);
+        assertThat(client.shouldEnable(), is(true));
+    }
+
+    @Test
+    public void whenPreviousTimerIsSetShouldEnableShouldReturnFalse() {
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("systemTimeResponseMessage", "timerResponseMessage");
+
+        when(messages.isTimerSet("timerResponseMessage")).thenReturn(true);
+
+        when(messages.getSystemTime("systemTimeResponseMessage")).thenReturn(new DateTime("2013-01-02T19:30:00"));
+        // The timer triggers before our timer would be activated and is activated for as long as we would activate it
+        when(messages.getStartTimeFromTimerMessage("timerResponseMessage")).thenReturn(new DateTime("2013-01-02T19:30:30"));
+        when(messages.getEndTimeFromTimerMessage("timerResponseMessage")).thenReturn(new DateTime("2013-01-02T19:31:00"));
+
+        assertThat(client.shouldEnable(), is(false));
+    }
+
+    @Test
+    public void whenPreviousTimerDurationDoesNotMatchShouldEnableShouldReturnTrue() {
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("systemTimeResponseMessage", "timerResponseMessage");
+
+        when(messages.isTimerSet("timerMessage")).thenReturn(true);
+
+        when(messages.getSystemTime("systemTimeMessage")).thenReturn(new DateTime("2013-01-02T19:30:00"));
+        // The timer triggers before our timer would be activated, but remains active longer than expected
+        when(messages.getStartTimeFromTimerMessage("timerMessage")).thenReturn(new DateTime("2013-01-02T19:30:30"));
+        when(messages.getEndTimeFromTimerMessage("timerMessage")).thenReturn(new DateTime("2013-01-02T19:39:00"));
+
+        assertThat(client.shouldEnable(), is(true));
+    }
+
+    @Test
+    public void whenPreviousTimerStartsTooLateShouldEnableShouldReturnTrue() {
+        when(telnetClient.waitForMessage(any(Predicate.class), anyInt())).thenReturn("systemTimeResponseMessage", "timerResponseMessage");
+
+        when(messages.isTimerSet("timerMessage")).thenReturn(true);
+
+        when(messages.getSystemTime("systemTimeMessage")).thenReturn(new DateTime("2013-01-02T19:30:00"));
+        // The timer triggers after our timer would be activated
+        when(messages.getStartTimeFromTimerMessage("timerMessage")).thenReturn(new DateTime("2013-01-02T19:39:00"));
+        when(messages.getEndTimeFromTimerMessage("timerMessage")).thenReturn(new DateTime("2013-01-02T19:39:30"));
+
+        assertThat(client.shouldEnable(), is(true));
     }
 
     @Test

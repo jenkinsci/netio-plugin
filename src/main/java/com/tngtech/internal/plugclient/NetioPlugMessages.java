@@ -37,7 +37,7 @@ public class NetioPlugMessages {
     }
 
     public String getTimerMessage(Plug plug) {
-        return String.format("port timer %d t", plug.getPlugNumber());
+        return String.format("port timer %d dt", plug.getPlugNumber());
     }
 
     public String getPortEnableDisableMessage(Plug plug, int newState) {
@@ -79,11 +79,27 @@ public class NetioPlugMessages {
         return dateTimeFormatter.parseDateTime(timeText);
     }
 
-    private String stripCommandCode(String dateText) {
-        return dateText.replaceAll("^[\\S]*", "").trim();
-    }
 
     public boolean isTimerSet(String timerMessageText) {
         return timerMessageText.contains("timer");
     }
+
+    public DateTime getStartTimeFromTimerMessage(String response) {
+
+        String[] tokens = stripCommandCode(response).split(" ");
+        String startTimeToken = tokens[1];
+        return dateTimeFormatter.parseDateTime(startTimeToken);
+    }
+
+    public DateTime getEndTimeFromTimerMessage(String response) {
+        String[] tokens = stripCommandCode(response).split(" ");
+        String endTimeToken = tokens[2];
+        return dateTimeFormatter.parseDateTime(endTimeToken);
+    }
+
+    private String stripCommandCode(String dateText) {
+        return dateText.replaceAll("^[\\S]*", "").trim();
+    }
+
+
 }

@@ -5,6 +5,7 @@ public interface PlugClient {
 
     void enablePlugPort();
     void disablePlugPort();
+    boolean shouldEnable();
     void enablePlugPortTemporarily();
 
     void disconnect();

@@ -43,7 +43,7 @@ public class NetioPlugMessagesTest {
 
     @Test
     public void testGetTimerMessage() {
-        assertThat(messages.getTimerMessage(Plug.PLUG1), is("port timer 1 t"));
+        assertThat(messages.getTimerMessage(Plug.PLUG1), is("port timer 1 dt"));
     }
 
     @Test
@@ -79,5 +79,13 @@ public class NetioPlugMessagesTest {
     public void testIsTimerSet() {
         assertThat(messages.isTimerSet("250 once 19:14:56 19:15:26 1111111"), is(false));
         assertThat(messages.isTimerSet("250 timer 08:00:00 17:30:00 1111111"), is(true));
+    }
+
+    @Test
+    public void testGetTimeForTimerMessage() {
+        String responseText = "250 once 2013/01/02,20:13:03 2013/01/02,20:13:33 1111111";
+
+        assertThat(messages.getStartTimeFromTimerMessage(responseText), is(new DateTime("2013-01-02T20:13:03")));
+        assertThat(messages.getEndTimeFromTimerMessage(responseText), is(new DateTime("2013-01-02T20:13:33")));
     }
 }

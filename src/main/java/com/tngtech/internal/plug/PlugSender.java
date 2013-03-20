@@ -23,7 +23,9 @@ public class PlugSender {
     private void enablePlugPortTemporarily(PlugConfig config) {
         PlugClient plugClient = getPlugClient(config);
         plugClient.login();
-        plugClient.enablePlugPortTemporarily();
+        if (plugClient.shouldEnable()) {
+            plugClient.enablePlugPortTemporarily();
+        }
         plugClient.disconnect();
     }
 

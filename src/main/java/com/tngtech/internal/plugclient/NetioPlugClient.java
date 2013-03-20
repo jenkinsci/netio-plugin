@@ -5,6 +5,7 @@ import com.tngtech.internal.plug.PlugConfig;
 import com.tngtech.internal.telnet.SynchronousTelnetClient;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+import org.joda.time.Seconds;
 
 public class NetioPlugClient implements PlugClient {
     public static final int DEFAULT_TIMEOUT = 1000;
@@ -50,16 +51,21 @@ public class NetioPlugClient implements PlugClient {
     }
 
     public boolean shouldEnable() {
-        String response = sendAndWaitForAcknowledge(messages.getTimerMessage(config.getPlug()), NetioPlugMessages.STATUS_OK);
+        String systemTimeMessage = sendAndWaitForAcknowledge(messages.getSystemTimeMessage(), NetioPlugMessages.STATUS_OK);
+        String timerMessage = sendAndWaitForAcknowledge(messages.getTimerMessage(config.getPlug()), NetioPlugMessages.STATUS_OK);
 
-        if (!messages.isTimerSet(response)) {
+        if (!messages.isTimerSet(timerMessage)) {
             return true;
         }
 
-        //DateTime startTime = getStartTimeFrom(response);
-        //DateTime endTime = getEndTimeFrom(response);
+        DateTime systemTime = messages.getSystemTime(systemTimeMessage);
+        DateTime startTime = messages.getStartTimeFromTimerMessage(timerMessage);
+        DateTime endTime = messages.getEndTimeFromTimerMessage(timerMessage);
 
-        return false;
+        int secondsBetweenStartAndEndTime = Seconds.secondsBetween(startTime, endTime).getSeconds();
+        int secondsBetweenNowAndStartTime = Seconds.secondsBetween(systemTime, startTime).getSeconds();
+
+        return secondsBetweenStartAndEndTime != config.getActivationDurationSeconds() || secondsBetweenNowAndStartTime >= config.getDelaySeconds();
     }
 
     public void enablePlugPortTemporarily() {
