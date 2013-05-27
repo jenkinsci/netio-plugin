@@ -6,7 +6,7 @@ Installation:
 The plugin depends on libraries not available at Maven Central. To install these libraries locally, cd into the project folder and call "install-non-maven-libs". This should install all required libraries.
 
 Next, change the settings in "src/main/resources/plug-config.properties" to the 
-values used by your NetIO plug. If you don't own such a plug yet, skip this step.
+values used by your NetIO plug. If you don't own such a plug, skip this step.
 
 Then, call "mvn clean install" and the plugin should create the file "plug-in.hpi" in the "target" folder. This file can be installed using the Jenkins GUI. If you do not own the plug yet, use "mvn clean install -P unit-tests-only" instead. 
 If you want to test the plugin instead, run "mvn hpi:run". For this to work, you'll first have to configure your Maven settings XML file according to the tutorial found at https://wiki.jenkins-ci.org/display/JENKINS/Plugin+tutorial.
